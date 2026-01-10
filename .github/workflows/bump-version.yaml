@@ -38,9 +38,10 @@ jobs:
           token: ${{ secrets.GH_ACTIONS_TOKEN }}
 
       - name: Bump version
-        uses: callowayproject/bump-my-version-action@v1
+        uses: callowayproject/bump-my-version@master
         with:
           args: ${{ github.event.inputs.part }} eu-gryta-kmp-zebra/version.properties
+          github-token: ${{ secrets.GH_ACTIONS_TOKEN }}
 
       - name: Push changes
         run: git push
