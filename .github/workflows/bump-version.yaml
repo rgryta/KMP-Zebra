@@ -3,8 +3,8 @@ name: Bump Version
 on:
   workflow_dispatch:
     inputs:
-      version_type:
-        description: 'Version type to bump'
+      part:
+        description: 'Version part to bump'
         required: true
         type: choice
         options:
@@ -19,65 +19,28 @@ permissions:
 jobs:
   bump:
     runs-on: ubuntu-latest
+    env:
+      BUMPVERSION_ALLOW_DIRTY: "false"
+      BUMPVERSION_COMMIT: "true"
+      BUMPVERSION_TAG: "false"
+      BUMPVERSION_PARSE: '(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)'
+      BUMPVERSION_SERIALIZE: '{major}.{minor}.{patch}'
+      BUMPVERSION_SEARCH: 'version={current_version}'
+      BUMPVERSION_REPLACE: 'version={new_version}'
+      BUMPVERSION_REGEX: "false"
+      BUMPVERSION_IGNORE_MISSING_VERSION: "false"
+      BUMPVERSION_MESSAGE: 'Bump version: {current_version} → {new_version}'
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_ACTIONS_TOKEN }}
-          fetch-depth: 0
 
       - name: Bump version
-        id: bump
-        uses: christian-draeger/increment-semantic-version@1.1.0
+        uses: callowayproject/bump-my-version-action@v1
         with:
-          current-version: ${{ steps.read.outputs.version }}
-          version-fragment: ${{ github.event.inputs.version_type }}
+          args: ${{ github.event.inputs.part }} eu-gryta-kmp-zebra/version.properties
 
-      - name: Read current version
-        id: read
-        run: |
-          VERSION=$(grep "^version=" eu-gryta-kmp-zebra/version.properties | cut -d'=' -f2)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Current version: $VERSION"
-
-      - name: Calculate new version
-        id: new_version
-        run: |
-          CURRENT="${{ steps.read.outputs.version }}"
-          TYPE="${{ github.event.inputs.version_type }}"
-
-          IFS='.' read -r -a parts <<< "$CURRENT"
-          MAJOR="${parts[0]}"
-          MINOR="${parts[1]}"
-          PATCH="${parts[2]}"
-
-          case "$TYPE" in
-            major)
-              MAJOR=$((MAJOR + 1))
-              MINOR=0
-              PATCH=0
-              ;;
-            minor)
-              MINOR=$((MINOR + 1))
-              PATCH=0
-              ;;
-            patch)
-              PATCH=$((PATCH + 1))
-              ;;
-          esac
-
-          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
-          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          echo "New version: $NEW_VERSION"
-
-      - name: Update version file
-        run: |
-          echo "version=${{ steps.new_version.outputs.new_version }}" > eu-gryta-kmp-zebra/version.properties
-
-      - name: Commit version bump
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add eu-gryta-kmp-zebra/version.properties
-          git commit -m "Bump version to ${{ steps.new_version.outputs.new_version }}"
-          git push
+      - name: Push changes
+        run: git push
