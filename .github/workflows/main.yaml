@@ -19,7 +19,7 @@ jobs:
         uses: rgryta/Check-Bump@main
         with:
           method: 'regex'
-          path: 'zebra/version.properties'
+          path: 'eu-gryta-kmp-zebra/version.properties'
           prefix: 'v'
 
       - name: Push Tag
