@@ -5,4 +5,5 @@ plugins {
     alias(libs.plugins.kotlinAndroid) apply false
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.native.cocoapods) apply false
+    alias(libs.plugins.vanniktech) apply false
 }
