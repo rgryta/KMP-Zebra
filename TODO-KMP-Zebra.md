@@ -2,107 +2,67 @@
 
 This document lists structural and organizational improvements for the KMP-Zebra library based on comparison with Compose-Elements best practices.
 
+## 📈 Progress Summary
+
+**Completed:** 3/12 items (25%)
+**Status:** Production-ready foundation established ✅
+
+**Recent Achievements (January 2026):**
+- ✅ Full CI/CD pipeline with automated releases
+- ✅ GitHub Packages publishing configured
+- ✅ Android sample app with barcode generation and scanning
+- ✅ Clean repository (build artifacts removed from git)
+
+**Next Focus:** Testing, optimization, and maintenance tooling
+
 ---
 
 ## 🔴 High Priority (Production Readiness)
 
-### 1. Add CI/CD Pipeline
-**Problem:** No automated workflows - releases are manual and error-prone.
+### 1. ✅ COMPLETED: Add CI/CD Pipeline
+**Status:** Fully implemented and tested.
 
-**Action Items:**
-- [ ] Create `.github/workflows/tag.yaml` - Auto-tag on version bump
+**Completed Items:**
+- ✅ Created `.github/workflows/main.yaml` - Auto-tag on version bump
   - Trigger: Push to `main` branch
-  - Check if `zebra/version.properties` changed
-  - Create git tag matching new version
-  - Use action: `rgryta/Check-Bump@main` or similar
+  - Checks `zebra/version.properties` for changes
+  - Creates git tag with `v` prefix using `rgryta/Check-Bump@main`
 
-- [ ] Create `.github/workflows/release.yaml` - Auto-release creation
+- ✅ Created `.github/workflows/release.yaml` - Auto-release creation with APK
   - Trigger: Tag push matching `v*` pattern
-  - Generate changelog from commits
-  - Create GitHub release with notes
+  - Builds Android sample APK (release variant)
+  - Generates changelog from git commits
+  - Creates GitHub release with changelog and artifacts
+  - Attaches `zebra-sample-<version>.apk` to release
+  - Includes diff patch between versions
 
-- [ ] Create `.github/workflows/publish.yaml` - Publish to Maven
+- ✅ Created `.github/workflows/publish.yaml` - Publish to GitHub Packages
   - Trigger: Release published event
-  - Build on macOS runner (for iOS support)
-  - Run `./gradlew publishAllPublicationsToGitHubPackagesRepository`
-  - Requires secrets: `GPR_USERNAME`, `GPR_TOKEN`
+  - Runs on macOS-15 (for iOS compilation)
+  - Executes `./gradlew :zebra:publishAllPublicationsToGitHubPackagesRepository`
+  - Uses secrets: `GPR_USERNAME`, `GPR_TOKEN`
 
-**Impact:** Eliminates manual release steps, reduces human error, enables continuous delivery.
-
-**Reference:** See Compose-Elements workflows at `/config/workspace/WellMate/Compose-Elements/.github/workflows/`
+**Impact:** Zero manual release steps, sample APK automatically available for testing.
 
 ---
 
-### 2. Migrate to venniktech Maven Publishing Plugin
-**Problem:** Manual publishing configuration is verbose and lacks features like signing.
+### 2. ✅ COMPLETED: Migrate to venniktech Maven Publishing Plugin
+**Status:** Fully configured with GitHub Packages support.
 
-**Current State:**
-```kotlin
-// zebra/build.gradle.kts
-publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/...")
-            credentials { ... }
-        }
-    }
-}
-```
+**Completed Items:**
+- ✅ Added `vanniktech` plugin (v0.35.0) to version catalog
+- ✅ Applied plugin in `zebra/build.gradle.kts`
+- ✅ Configured `mavenPublishing` block with:
+  - Coordinates: `eu.gryta:zebra:<version>`
+  - Complete POM metadata (name, description, licenses, developers, SCM)
+  - MIT License
+  - Developer info: Radosław Gryta
+- ✅ Configured `publishing` repositories:
+  - GitHub Packages: `https://maven.pkg.github.com/rgryta/KMP-Zebra`
+  - Maven Local for testing
+- ✅ Tested build successfully
 
-**Action Items:**
-- [ ] Add plugin to root `build.gradle.kts`:
-```kotlin
-plugins {
-    id("com.vanniktech.maven.publish") version "0.31.0" apply false
-}
-```
-
-- [ ] Replace publishing block in `zebra/build.gradle.kts`:
-```kotlin
-plugins {
-    id("com.vanniktech.maven.publish")
-}
-
-mavenPublishing {
-    coordinates("eu.gryta", "kmp-zebra", version)
-
-    pom {
-        name.set("KMP-Zebra")
-        description.set("Kotlin Multiplatform barcode scanning and generation library")
-        url.set("https://github.com/rgryta/KMP-Zebra")
-
-        licenses {
-            license {
-                name.set("Apache License 2.0")
-                url.set("https://www.apache.org/licenses/LICENSE-2.0")
-            }
-        }
-
-        developers {
-            developer {
-                id.set("rgryta")
-                name.set("Your Name")
-                email.set("your.email@example.com")
-            }
-        }
-
-        scm {
-            url.set("https://github.com/rgryta/KMP-Zebra")
-            connection.set("scm:git:git://github.com/rgryta/KMP-Zebra.git")
-            developerConnection.set("scm:git:ssh://git@github.com/rgryta/KMP-Zebra.git")
-        }
-    }
-
-    publishToMavenCentral(SonatypeHost.DEFAULT, automaticRelease = true)
-    signAllPublications()
-}
-```
-
-- [ ] Remove old publishing configuration
-- [ ] Test local publishing: `./gradlew publishToMavenLocal`
-
-**Impact:** Industry-standard publishing, automatic POM generation, signing support, less boilerplate.
+**Impact:** Production-ready publishing configuration, industry-standard tooling.
 
 ---
 
@@ -362,25 +322,35 @@ kotlin {
 
 ---
 
-### 11. Add Preview/Sample App (Optional)
-**Problem:** No visual way to demo library capabilities.
+### 11. ✅ COMPLETED: Add Preview/Sample App
+**Status:** Fully functional Android sample app created.
 
-**Action Items:**
-- [ ] Create `sample/` module with simple Android app:
-  - Camera preview with barcode scanning overlay
-  - Generate barcode screen
-  - Format selection UI
+**Completed Items:**
+- ✅ Created `sample/` module with Android application
+- ✅ Implemented barcode generation screen:
+  - Text input for content
+  - Format dropdown (QR Code, Code 128, EAN-13, etc.)
+  - Real-time barcode preview
+  - Supports all library formats
+- ✅ Implemented barcode scanning screen:
+  - Gallery image picker
+  - Image preview
+  - Scan results with format detection
+  - Success/NotFound/Error state handling
+- ✅ Material 3 UI with bottom navigation
+- ✅ BarcodeImage ↔ Android Bitmap conversion utilities
+- ✅ Added to `settings.gradle.kts` as `:sample`
+- ✅ Created comprehensive README at `sample/README.md`
+- ✅ Linked from main README
+- ✅ Sample APK automatically built and attached to GitHub releases
 
-- [ ] Add to `settings.gradle.kts`:
-```kotlin
-include(":sample")
-```
+**Impact:** Users can download and test the library immediately, visual demo of all features, testing playground for development.
 
-- [ ] Link from README: "See `sample/` for working examples"
-
-**Impact:** Easier onboarding for new users, visual demos for README, testing playground.
-
-**Reference:** Many KMP libraries include sample apps (Coil, Ktor, etc.).
+**Future Enhancements:**
+- [ ] Add live camera scanning (currently gallery-only)
+- [ ] Add save/share functionality for generated barcodes
+- [ ] Add scan history
+- [ ] Add batch scanning support
 
 ---
 
@@ -408,39 +378,47 @@ mavenPublishing {
 
 ---
 
-## 📋 Implementation Order
+## 📋 Implementation Status
 
-### Phase 1: Foundation (Week 1)
-1. Add CI/CD pipeline (Item #1)
-2. Optimize Gradle configuration (Item #3)
-3. Migrate to venniktech publishing (Item #2)
+### ✅ Completed (Production-Ready Foundation)
+1. ✅ CI/CD pipeline (Item #1) - Fully automated releases
+2. ✅ venniktech publishing (Item #2) - GitHub Packages ready
+3. ✅ Sample app (Item #11) - Android demo with generation + scanning
 
-### Phase 2: Quality (Week 2)
-4. Add comprehensive testing (Item #4)
-5. Add dependency update checks (Item #7)
+### 🔄 Next Priority (Recommended Order)
+1. Optimize Gradle configuration (Item #3) - Build performance
+2. Add comprehensive testing (Item #4) - Quality assurance
+3. Add dependency update checks (Item #7) - Maintenance
 
-### Phase 3: Developer Experience (Week 3)
-6. Rename module directory (Item #5)
-7. Simplify version management (Item #8)
-8. Improve dependency management (Item #6)
-
-### Phase 4: Polish (As Needed)
-9. Explicit compiler targets (Item #10)
-10. Feature subdirectories (Item #9) - Only if library grows
-11. Sample app (Item #11) - If community requests demos
-12. Maven Central (Item #12) - After validation of demand
+### 🔮 Future Enhancements (As Needed)
+4. Rename module directory (Item #5) - If confusion arises
+5. Simplify version management (Item #8) - If auto-bump causes issues
+6. Improve dependency management (Item #6) - If catalog becomes unwieldy
+7. Explicit compiler targets (Item #10) - If compatibility issues occur
+8. Feature subdirectories (Item #9) - Only if library grows significantly
+9. Maven Central (Item #12) - After validation of demand
 
 ---
 
 ## 📊 Success Metrics
 
-After implementing these improvements:
-- ✅ **Zero manual release steps** - Push to main triggers everything
-- ✅ **Test coverage >70%** - Core logic thoroughly tested
-- ✅ **Build time <2 minutes** - With configuration cache
-- ✅ **Clear module naming** - Directory matches artifact name
-- ✅ **Dependency transparency** - Know when updates available
-- ✅ **Production-ready** - Automated workflows, tested, optimized
+### Current Status
+- ✅ **Zero manual release steps** - Push to main triggers everything (ACHIEVED)
+- ✅ **Sample app available** - Download APK from GitHub releases (ACHIEVED)
+- ✅ **Automated publishing** - GitHub Packages integration ready (ACHIEVED)
+- ✅ **Clean repository** - No build artifacts in git (ACHIEVED)
+- ⏳ **Test coverage >70%** - Core logic thoroughly tested (TODO)
+- ⏳ **Build time <2 minutes** - With configuration cache (TODO)
+- ⏳ **Dependency transparency** - Know when updates available (TODO)
+
+### Production Readiness Checklist
+- ✅ CI/CD workflows configured
+- ✅ Publishing infrastructure ready
+- ✅ Sample app demonstrates functionality
+- ✅ Documentation comprehensive
+- ⏳ Comprehensive test suite
+- ⏳ Build optimization
+- ⏳ Dependency monitoring
 
 ---
 
