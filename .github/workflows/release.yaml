@@ -10,39 +10,44 @@ permissions:
 
 jobs:
   build-sample-apk:
+    name: Build Sample APK
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-java@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: '21'
+          distribution: zulu
+          java-version: "21"
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Add execution right to gradlew
+      - name: Make gradlew executable
         run: chmod +x ./gradlew
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3.2.1
 
-      - name: Install Android SDK
+      - name: Install Android SDK platform
         run: sdkmanager "platform-tools" "platforms;android-36"
 
       - name: Build Sample APK
-        run: ./gradlew :sample:assembleRelease --no-daemon --stacktrace
-      
+        run: ./gradlew :sample:assembleRelease --no-daemon
+
+      # 🔍 Find APK dynamically (AGP-safe)
       - name: Locate Sample APK
         id: find_apk
         run: |
+          set -euo pipefail
           APK=$(find sample/build/outputs/apk -name "*.apk" | head -n 1)
           echo "Found APK: $APK"
-          echo "apk=$APK" >> $GITHUB_OUTPUT
+          echo "apk=$APK" >> "$GITHUB_OUTPUT"
 
       - name: Upload Sample APK
         uses: actions/upload-artifact@v4
@@ -52,6 +57,7 @@ jobs:
           retention-days: 1
 
   release:
+    name: Create GitHub Release
     runs-on: ubuntu-latest
     needs: build-sample-apk
 
@@ -65,38 +71,38 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: zebra-sample-apk
-          path: artifacts/
+          path: artifacts
 
-      - name: Rename Sample APK
-        run: |
-          mkdir -p context
-          mv artifacts/sample-release.apk context/zebra-sample-${{ github.ref_name }}.apk
-
-      - name: Generate Release Notes & Diff
-        id: generate_notes
+      - name: Prepare release assets
+        id: prepare_assets
         shell: bash
         run: |
           set -euo pipefail
 
-          CURRENT_TAG="${{ github.ref_name }}"
+          mkdir -p context
 
-          # Find the previous tag (excluding the current one)
+          APK=$(ls artifacts/*.apk | head -n 1)
+          RELEASE_APK="zebra-sample-${{ github.ref_name }}.apk"
+
+          mv "$APK" "context/$RELEASE_APK"
+
+          CURRENT_TAG="${{ github.ref_name }}"
           PREV_TAG=$(git describe --tags --abbrev=0 "${CURRENT_TAG}^" 2>/dev/null || true)
 
-          echo "Generating release for ${CURRENT_TAG} (Previous: ${PREV_TAG:-none})"
+          echo "Generating release for $CURRENT_TAG (previous: ${PREV_TAG:-none})"
 
           # -----------------------------
-          # Release body
+          # Release notes
           # -----------------------------
           {
             echo "# Changelog"
             echo
 
-            if [ -z "${PREV_TAG}" ]; then
+            if [ -z "$PREV_TAG" ]; then
               echo "Initial release."
             else
-              git log "${PREV_TAG}..HEAD" \
-                --pretty=format:"- [[%h]](https://github.com/${{ github.repository }}/commit/%H) %s (%an)%n" \
+              git log "$PREV_TAG..HEAD" \
+                --pretty=format:"- [[%h]](https://github.com/${{ github.repository }}/commit/%H) %s (%an)" \
                 --no-merges
             fi
 
@@ -105,25 +111,25 @@ jobs:
             echo
             echo "## Sample App"
             echo
-            echo "Download the sample Android app to test barcode scanning and generation:"
-            echo "- **zebra-sample-${CURRENT_TAG}.apk** - Demonstrates all library features"
+            echo "Download the sample Android app:"
+            echo "- **$RELEASE_APK**"
           } > context/release_notes.md
 
           # -----------------------------
-          # Diff as artifact
+          # Optional diff
           # -----------------------------
-          if [ -n "${PREV_TAG}" ]; then
-             git diff $PREV_TAG HEAD > context/full_diff.patch
-             echo "upload_files=context/full_diff.patch context/zebra-sample-${{ github.ref_name }}.apk" >> $GITHUB_OUTPUT
+          if [ -n "$PREV_TAG" ]; then
+            git diff "$PREV_TAG" HEAD > context/full_diff.patch
+            echo "files=context/$RELEASE_APK context/full_diff.patch" >> "$GITHUB_OUTPUT"
           else
-             echo "upload_files=context/zebra-sample-${{ github.ref_name }}.apk" >> $GITHUB_OUTPUT
+            echo "files=context/$RELEASE_APK" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Create Release
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GH_ACTIONS_TOKEN }}
           body_path: context/release_notes.md
-          files: ${{ steps.generate_notes.outputs.upload_files }}
+          files: ${{ steps.prepare_assets.outputs.files }}
           draft: false
           prerelease: false
