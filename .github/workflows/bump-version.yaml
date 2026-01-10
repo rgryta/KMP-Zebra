@@ -29,7 +29,9 @@ jobs:
       BUMPVERSION_REPLACE: 'version={new_version}'
       BUMPVERSION_REGEX: "false"
       BUMPVERSION_IGNORE_MISSING_VERSION: "false"
-      BUMPVERSION_MESSAGE: 'Bump version: {current_version} → {new_version}'
+      BUMPVERSION_IGNORE_MISSING_FILES: "true"
+      BUMPVERSION_NO_CONFIGURED_FILES: "true"
+      BUMPVERSION_MESSAGE: '[{new_version}] Release'
 
     steps:
       - name: Checkout
@@ -37,11 +39,16 @@ jobs:
         with:
           token: ${{ secrets.GH_ACTIONS_TOKEN }}
 
-      - name: Bump version
-        uses: callowayproject/bump-my-version@master
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          args: ${{ github.event.inputs.part }} eu-gryta-kmp-zebra/version.properties
-          github-token: ${{ secrets.GH_ACTIONS_TOKEN }}
+          python-version: '3.12'
+
+      - name: Install bump-my-version
+        run: pip install bump-my-version
+
+      - name: Bump version
+        run: bump-my-version bump ${{ github.event.inputs.part }} eu-gryta-kmp-zebra/version.properties
 
       - name: Push changes
         run: git push
