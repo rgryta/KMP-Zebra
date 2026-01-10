@@ -1,4 +1,4 @@
-package eu.gryta.zebra
+package eu.gryta.zebra.core
 
 enum class ImageFormat {
     RGB,

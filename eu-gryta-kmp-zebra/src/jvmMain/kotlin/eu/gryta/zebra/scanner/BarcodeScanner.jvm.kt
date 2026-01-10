@@ -1,10 +1,19 @@
-package eu.gryta.zebra
+package eu.gryta.zebra.scanner
 
-import com.google.zxing.*
+import com.google.zxing.BinaryBitmap
+import com.google.zxing.DecodeHintType
+import com.google.zxing.MultiFormatReader
+import com.google.zxing.NotFoundException
+import com.google.zxing.ResultPoint
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource
 import com.google.zxing.common.HybridBinarizer
+import eu.gryta.zebra.core.BarcodeFormat
+import eu.gryta.zebra.core.BarcodeImage
+import eu.gryta.zebra.core.BarcodeResult
+import eu.gryta.zebra.core.BoundingBox
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.google.zxing.BarcodeFormat as ZXingFormat
 
 actual class BarcodeScanner {
     private val reader = MultiFormatReader()
@@ -67,45 +76,45 @@ actual class BarcodeScanner {
     }
 }
 
-private fun com.google.zxing.BarcodeFormat.toKMP(): BarcodeFormat {
+private fun ZXingFormat.toKMP(): BarcodeFormat {
     return when (this) {
-        com.google.zxing.BarcodeFormat.QR_CODE -> BarcodeFormat.QR_CODE
-        com.google.zxing.BarcodeFormat.PDF_417 -> BarcodeFormat.PDF_417
-        com.google.zxing.BarcodeFormat.DATA_MATRIX -> BarcodeFormat.DATA_MATRIX
-        com.google.zxing.BarcodeFormat.CODE_128 -> BarcodeFormat.CODE_128
-        com.google.zxing.BarcodeFormat.CODE_39 -> BarcodeFormat.CODE_39
-        com.google.zxing.BarcodeFormat.CODE_93 -> BarcodeFormat.CODE_93
-        com.google.zxing.BarcodeFormat.CODABAR -> BarcodeFormat.CODABAR
-        com.google.zxing.BarcodeFormat.EAN_8 -> BarcodeFormat.EAN_8
-        com.google.zxing.BarcodeFormat.EAN_13 -> BarcodeFormat.EAN_13
-        com.google.zxing.BarcodeFormat.UPC_A -> BarcodeFormat.UPC_A
-        com.google.zxing.BarcodeFormat.UPC_E -> BarcodeFormat.UPC_E
-        com.google.zxing.BarcodeFormat.ITF -> BarcodeFormat.ITF
-        com.google.zxing.BarcodeFormat.AZTEC -> BarcodeFormat.AZTEC
-        com.google.zxing.BarcodeFormat.MAXICODE -> BarcodeFormat.MAXICODE
-        com.google.zxing.BarcodeFormat.RSS_14 -> BarcodeFormat.RSS_14
-        com.google.zxing.BarcodeFormat.RSS_EXPANDED -> BarcodeFormat.RSS_EXPANDED
+        ZXingFormat.QR_CODE -> BarcodeFormat.QR_CODE
+        ZXingFormat.PDF_417 -> BarcodeFormat.PDF_417
+        ZXingFormat.DATA_MATRIX -> BarcodeFormat.DATA_MATRIX
+        ZXingFormat.CODE_128 -> BarcodeFormat.CODE_128
+        ZXingFormat.CODE_39 -> BarcodeFormat.CODE_39
+        ZXingFormat.CODE_93 -> BarcodeFormat.CODE_93
+        ZXingFormat.CODABAR -> BarcodeFormat.CODABAR
+        ZXingFormat.EAN_8 -> BarcodeFormat.EAN_8
+        ZXingFormat.EAN_13 -> BarcodeFormat.EAN_13
+        ZXingFormat.UPC_A -> BarcodeFormat.UPC_A
+        ZXingFormat.UPC_E -> BarcodeFormat.UPC_E
+        ZXingFormat.ITF -> BarcodeFormat.ITF
+        ZXingFormat.AZTEC -> BarcodeFormat.AZTEC
+        ZXingFormat.MAXICODE -> BarcodeFormat.MAXICODE
+        ZXingFormat.RSS_14 -> BarcodeFormat.RSS_14
+        ZXingFormat.RSS_EXPANDED -> BarcodeFormat.RSS_EXPANDED
         else -> throw IllegalArgumentException("Unsupported format: $this")
     }
 }
 
-private fun BarcodeFormat.toZXingFormat(): com.google.zxing.BarcodeFormat {
+private fun BarcodeFormat.toZXingFormat(): ZXingFormat {
     return when (this) {
-        BarcodeFormat.QR_CODE -> com.google.zxing.BarcodeFormat.QR_CODE
-        BarcodeFormat.PDF_417 -> com.google.zxing.BarcodeFormat.PDF_417
-        BarcodeFormat.DATA_MATRIX -> com.google.zxing.BarcodeFormat.DATA_MATRIX
-        BarcodeFormat.CODE_128 -> com.google.zxing.BarcodeFormat.CODE_128
-        BarcodeFormat.CODE_39 -> com.google.zxing.BarcodeFormat.CODE_39
-        BarcodeFormat.CODE_93 -> com.google.zxing.BarcodeFormat.CODE_93
-        BarcodeFormat.CODABAR -> com.google.zxing.BarcodeFormat.CODABAR
-        BarcodeFormat.EAN_8 -> com.google.zxing.BarcodeFormat.EAN_8
-        BarcodeFormat.EAN_13 -> com.google.zxing.BarcodeFormat.EAN_13
-        BarcodeFormat.UPC_A -> com.google.zxing.BarcodeFormat.UPC_A
-        BarcodeFormat.UPC_E -> com.google.zxing.BarcodeFormat.UPC_E
-        BarcodeFormat.ITF -> com.google.zxing.BarcodeFormat.ITF
-        BarcodeFormat.AZTEC -> com.google.zxing.BarcodeFormat.AZTEC
-        BarcodeFormat.MAXICODE -> com.google.zxing.BarcodeFormat.MAXICODE
-        BarcodeFormat.RSS_14 -> com.google.zxing.BarcodeFormat.RSS_14
-        BarcodeFormat.RSS_EXPANDED -> com.google.zxing.BarcodeFormat.RSS_EXPANDED
+        BarcodeFormat.QR_CODE -> ZXingFormat.QR_CODE
+        BarcodeFormat.PDF_417 -> ZXingFormat.PDF_417
+        BarcodeFormat.DATA_MATRIX -> ZXingFormat.DATA_MATRIX
+        BarcodeFormat.CODE_128 -> ZXingFormat.CODE_128
+        BarcodeFormat.CODE_39 -> ZXingFormat.CODE_39
+        BarcodeFormat.CODE_93 -> ZXingFormat.CODE_93
+        BarcodeFormat.CODABAR -> ZXingFormat.CODABAR
+        BarcodeFormat.EAN_8 -> ZXingFormat.EAN_8
+        BarcodeFormat.EAN_13 -> ZXingFormat.EAN_13
+        BarcodeFormat.UPC_A -> ZXingFormat.UPC_A
+        BarcodeFormat.UPC_E -> ZXingFormat.UPC_E
+        BarcodeFormat.ITF -> ZXingFormat.ITF
+        BarcodeFormat.AZTEC -> ZXingFormat.AZTEC
+        BarcodeFormat.MAXICODE -> ZXingFormat.MAXICODE
+        BarcodeFormat.RSS_14 -> ZXingFormat.RSS_14
+        BarcodeFormat.RSS_EXPANDED -> ZXingFormat.RSS_EXPANDED
     }
 }

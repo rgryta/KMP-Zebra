@@ -1,4 +1,5 @@
-package eu.gryta.zebra
+package eu.gryta.zebra.generator
+import eu.gryta.zebra.core.*
 
 // iOS stub implementation for barcode generation
 // ZXing (Java library) is not available on iOS Native

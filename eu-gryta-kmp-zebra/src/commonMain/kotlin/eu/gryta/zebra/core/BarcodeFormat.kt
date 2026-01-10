@@ -1,4 +1,4 @@
-package eu.gryta.zebra
+package eu.gryta.zebra.core
 
 enum class BarcodeFormat(val displayName: String) {
     // 1D Formats

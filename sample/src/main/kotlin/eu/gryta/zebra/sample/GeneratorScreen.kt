@@ -9,9 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
-import eu.gryta.zebra.BarcodeFormat
-import eu.gryta.zebra.BarcodeGenerator
-import eu.gryta.zebra.GeneratorConfig
+import eu.gryta.zebra.core.BarcodeFormat
+import eu.gryta.zebra.generator.BarcodeGenerator
+import eu.gryta.zebra.generator.GeneratorConfig
 import eu.gryta.zebra.sample.ImageUtils.toBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -15,10 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import eu.gryta.zebra.BarcodeFormat
-import eu.gryta.zebra.BarcodeResult
-import eu.gryta.zebra.BarcodeScanner
-import eu.gryta.zebra.ScanConfig
+import eu.gryta.zebra.core.BarcodeFormat
+import eu.gryta.zebra.core.BarcodeResult
+import eu.gryta.zebra.scanner.BarcodeScanner
+import eu.gryta.zebra.scanner.ScanConfig
 import eu.gryta.zebra.sample.ImageUtils.toBarcodeImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

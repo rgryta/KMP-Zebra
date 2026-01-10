@@ -1,11 +1,16 @@
-package eu.gryta.zebra
+package eu.gryta.zebra.generator
 
-import com.google.zxing.*
+import com.google.zxing.BarcodeFormat as ZXingFormat
+import com.google.zxing.EncodeHintType
+import com.google.zxing.Writer
 import com.google.zxing.common.BitMatrix
 import com.google.zxing.qrcode.QRCodeWriter
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel as ZXingErrorCorrection
 import com.google.zxing.pdf417.PDF417Writer
 import com.google.zxing.datamatrix.DataMatrixWriter
 import com.google.zxing.oned.*
+import eu.gryta.zebra.core.BarcodeFormat
+import eu.gryta.zebra.core.BarcodeImage
 import java.awt.image.BufferedImage
 
 actual class BarcodeGenerator {
@@ -33,10 +38,10 @@ actual class BarcodeGenerator {
         val hints = mutableMapOf<EncodeHintType, Any>().apply {
             put(EncodeHintType.MARGIN, config.margin)
             put(EncodeHintType.ERROR_CORRECTION, when (config.errorCorrection) {
-                ErrorCorrectionLevel.LOW -> com.google.zxing.qrcode.decoder.ErrorCorrectionLevel.L
-                ErrorCorrectionLevel.MEDIUM -> com.google.zxing.qrcode.decoder.ErrorCorrectionLevel.M
-                ErrorCorrectionLevel.QUARTILE -> com.google.zxing.qrcode.decoder.ErrorCorrectionLevel.Q
-                ErrorCorrectionLevel.HIGH -> com.google.zxing.qrcode.decoder.ErrorCorrectionLevel.H
+                ErrorCorrectionLevel.LOW -> ZXingErrorCorrection.L
+                ErrorCorrectionLevel.MEDIUM -> ZXingErrorCorrection.M
+                ErrorCorrectionLevel.QUARTILE -> ZXingErrorCorrection.Q
+                ErrorCorrectionLevel.HIGH -> ZXingErrorCorrection.H
             })
         }
 
@@ -67,23 +72,23 @@ actual class BarcodeGenerator {
     }
 }
 
-private fun BarcodeFormat.toZXingFormat(): com.google.zxing.BarcodeFormat {
+private fun BarcodeFormat.toZXingFormat(): ZXingFormat {
     return when (this) {
-        BarcodeFormat.QR_CODE -> com.google.zxing.BarcodeFormat.QR_CODE
-        BarcodeFormat.PDF_417 -> com.google.zxing.BarcodeFormat.PDF_417
-        BarcodeFormat.DATA_MATRIX -> com.google.zxing.BarcodeFormat.DATA_MATRIX
-        BarcodeFormat.CODE_128 -> com.google.zxing.BarcodeFormat.CODE_128
-        BarcodeFormat.CODE_39 -> com.google.zxing.BarcodeFormat.CODE_39
-        BarcodeFormat.CODE_93 -> com.google.zxing.BarcodeFormat.CODE_93
-        BarcodeFormat.CODABAR -> com.google.zxing.BarcodeFormat.CODABAR
-        BarcodeFormat.EAN_8 -> com.google.zxing.BarcodeFormat.EAN_8
-        BarcodeFormat.EAN_13 -> com.google.zxing.BarcodeFormat.EAN_13
-        BarcodeFormat.UPC_A -> com.google.zxing.BarcodeFormat.UPC_A
-        BarcodeFormat.UPC_E -> com.google.zxing.BarcodeFormat.UPC_E
-        BarcodeFormat.ITF -> com.google.zxing.BarcodeFormat.ITF
-        BarcodeFormat.AZTEC -> com.google.zxing.BarcodeFormat.AZTEC
-        BarcodeFormat.MAXICODE -> com.google.zxing.BarcodeFormat.MAXICODE
-        BarcodeFormat.RSS_14 -> com.google.zxing.BarcodeFormat.RSS_14
-        BarcodeFormat.RSS_EXPANDED -> com.google.zxing.BarcodeFormat.RSS_EXPANDED
+        BarcodeFormat.QR_CODE -> ZXingFormat.QR_CODE
+        BarcodeFormat.PDF_417 -> ZXingFormat.PDF_417
+        BarcodeFormat.DATA_MATRIX -> ZXingFormat.DATA_MATRIX
+        BarcodeFormat.CODE_128 -> ZXingFormat.CODE_128
+        BarcodeFormat.CODE_39 -> ZXingFormat.CODE_39
+        BarcodeFormat.CODE_93 -> ZXingFormat.CODE_93
+        BarcodeFormat.CODABAR -> ZXingFormat.CODABAR
+        BarcodeFormat.EAN_8 -> ZXingFormat.EAN_8
+        BarcodeFormat.EAN_13 -> ZXingFormat.EAN_13
+        BarcodeFormat.UPC_A -> ZXingFormat.UPC_A
+        BarcodeFormat.UPC_E -> ZXingFormat.UPC_E
+        BarcodeFormat.ITF -> ZXingFormat.ITF
+        BarcodeFormat.AZTEC -> ZXingFormat.AZTEC
+        BarcodeFormat.MAXICODE -> ZXingFormat.MAXICODE
+        BarcodeFormat.RSS_14 -> ZXingFormat.RSS_14
+        BarcodeFormat.RSS_EXPANDED -> ZXingFormat.RSS_EXPANDED
     }
 }

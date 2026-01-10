@@ -1,4 +1,5 @@
-package eu.gryta.zebra
+package eu.gryta.zebra.scanner
+import eu.gryta.zebra.core.*
 
 // iOS stub implementation
 // This compiles without CocoaPods and allows cross-platform builds

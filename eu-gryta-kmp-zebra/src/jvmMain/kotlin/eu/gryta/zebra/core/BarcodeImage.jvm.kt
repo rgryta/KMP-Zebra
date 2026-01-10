@@ -1,16 +1,17 @@
-package eu.gryta.zebra
+package eu.gryta.zebra.core
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import java.awt.Color
+import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
+import javax.imageio.ImageIO
 
-actual class BarcodeImage(val bitmap: Bitmap) {
-    actual val width: Int get() = bitmap.width
-    actual val height: Int get() = bitmap.height
+actual class BarcodeImage(val bufferedImage: BufferedImage) {
+    actual val width: Int get() = bufferedImage.width
+    actual val height: Int get() = bufferedImage.height
 
     actual fun toByteArray(): ByteArray {
         val outputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        ImageIO.write(bufferedImage, "PNG", outputStream)
         return outputStream.toByteArray()
     }
 
@@ -21,9 +22,10 @@ actual class BarcodeImage(val bitmap: Bitmap) {
             height: Int,
             format: ImageFormat
         ): BarcodeImage {
-            val bitmap = when (format) {
+            val image = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
+
+            when (format) {
                 ImageFormat.RGB -> {
-                    val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
                     var pixelIndex = 0
                     for (y in 0 until height) {
                         for (x in 0 until width) {
@@ -31,15 +33,13 @@ actual class BarcodeImage(val bitmap: Bitmap) {
                                 val r = bytes[pixelIndex++].toInt() and 0xFF
                                 val g = bytes[pixelIndex++].toInt() and 0xFF
                                 val b = bytes[pixelIndex++].toInt() and 0xFF
-                                val color = (0xFF shl 24) or (r shl 16) or (g shl 8) or b
-                                bmp.setPixel(x, y, color)
+                                val rgb = (r shl 16) or (g shl 8) or b
+                                image.setRGB(x, y, rgb)
                             }
                         }
                     }
-                    bmp
                 }
                 ImageFormat.RGBA -> {
-                    val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
                     var pixelIndex = 0
                     for (y in 0 until height) {
                         for (x in 0 until width) {
@@ -47,47 +47,41 @@ actual class BarcodeImage(val bitmap: Bitmap) {
                                 val r = bytes[pixelIndex++].toInt() and 0xFF
                                 val g = bytes[pixelIndex++].toInt() and 0xFF
                                 val b = bytes[pixelIndex++].toInt() and 0xFF
-                                val a = bytes[pixelIndex++].toInt() and 0xFF
-                                val color = (a shl 24) or (r shl 16) or (g shl 8) or b
-                                bmp.setPixel(x, y, color)
+                                pixelIndex++ // Skip alpha
+                                val rgb = (r shl 16) or (g shl 8) or b
+                                image.setRGB(x, y, rgb)
                             }
                         }
                     }
-                    bmp
                 }
                 ImageFormat.GRAYSCALE -> {
-                    val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
                     var pixelIndex = 0
                     for (y in 0 until height) {
                         for (x in 0 until width) {
                             if (pixelIndex < bytes.size) {
                                 val gray = bytes[pixelIndex++].toInt() and 0xFF
-                                val color = (0xFF shl 24) or (gray shl 16) or (gray shl 8) or gray
-                                bmp.setPixel(x, y, color)
+                                val rgb = (gray shl 16) or (gray shl 8) or gray
+                                image.setRGB(x, y, rgb)
                             }
                         }
                     }
-                    bmp
                 }
                 ImageFormat.YUV -> {
-                    // YUV NV21 format (common from camera)
-                    val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-                    // Just use Y channel (luminance) for simplicity
+                    // Simple YUV to RGB conversion
                     var pixelIndex = 0
                     for (y in 0 until height) {
                         for (x in 0 until width) {
                             if (pixelIndex < bytes.size) {
                                 val gray = bytes[pixelIndex++].toInt() and 0xFF
-                                val color = (0xFF shl 24) or (gray shl 16) or (gray shl 8) or gray
-                                bmp.setPixel(x, y, color)
+                                val rgb = (gray shl 16) or (gray shl 8) or gray
+                                image.setRGB(x, y, rgb)
                             }
                         }
                     }
-                    bmp
                 }
             }
 
-            return BarcodeImage(bitmap)
+            return BarcodeImage(image)
         }
     }
 }

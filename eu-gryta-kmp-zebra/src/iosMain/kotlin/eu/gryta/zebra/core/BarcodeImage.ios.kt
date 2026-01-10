@@ -1,4 +1,4 @@
-package eu.gryta.zebra
+package eu.gryta.zebra.core
 
 // Simplified stub implementation for iOS
 // This compiles without CocoaPods and allows the project to build

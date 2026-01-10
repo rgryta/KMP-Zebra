@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.vanniktech)
-    // CocoaPods plugin removed - using cinterop directly instead
 }
 
 group = "eu.gryta"

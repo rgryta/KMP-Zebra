@@ -2,8 +2,8 @@ package eu.gryta.zebra.sample
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import eu.gryta.zebra.BarcodeImage
-import eu.gryta.zebra.ImageFormat
+import eu.gryta.zebra.core.BarcodeImage
+import eu.gryta.zebra.core.ImageFormat
 import java.io.ByteArrayOutputStream
 
 object ImageUtils {

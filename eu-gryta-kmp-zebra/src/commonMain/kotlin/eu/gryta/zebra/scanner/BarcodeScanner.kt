@@ -1,4 +1,8 @@
-package eu.gryta.zebra
+package eu.gryta.zebra.scanner
+
+import eu.gryta.zebra.core.BarcodeFormat
+import eu.gryta.zebra.core.BarcodeImage
+import eu.gryta.zebra.core.BarcodeResult
 
 expect class BarcodeScanner() {
     suspend fun scan(

@@ -1,4 +1,7 @@
-package eu.gryta.zebra
+package eu.gryta.zebra.generator
+
+import eu.gryta.zebra.core.BarcodeFormat
+import eu.gryta.zebra.core.BarcodeImage
 
 expect class BarcodeGenerator() {
     fun generate(

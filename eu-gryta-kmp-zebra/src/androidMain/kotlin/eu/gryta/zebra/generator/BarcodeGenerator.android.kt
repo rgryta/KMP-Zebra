@@ -1,4 +1,4 @@
-package eu.gryta.zebra
+package eu.gryta.zebra.generator
 
 import android.graphics.Bitmap
 import com.google.zxing.*
@@ -7,6 +7,8 @@ import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.pdf417.PDF417Writer
 import com.google.zxing.datamatrix.DataMatrixWriter
 import com.google.zxing.oned.*
+import eu.gryta.zebra.core.BarcodeFormat
+import eu.gryta.zebra.core.BarcodeImage
 
 actual class BarcodeGenerator {
     actual fun generate(

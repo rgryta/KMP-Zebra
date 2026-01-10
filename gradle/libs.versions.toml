@@ -6,7 +6,6 @@ android-minSdk = "26"
 kotlinx-coroutines = "1.10.2"
 zxing = "3.5.3"
 mlkit-barcode = "17.3.0"
-cocoapods = "2.3.0"
 vanniktech = "0.35.0"
 compose-bom = "2025.01.00"
 activity-compose = "1.10.0"
@@ -39,6 +38,5 @@ android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-native-cocoapods = { id= "org.jetbrains.kotlin.native.cocoapods", version.ref = "cocoapods" }
 vanniktech = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "versions-plugin" }

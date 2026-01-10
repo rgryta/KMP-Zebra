@@ -1,8 +1,12 @@
-package eu.gryta.zebra
+package eu.gryta.zebra.scanner
 
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
+import eu.gryta.zebra.core.BarcodeFormat
+import eu.gryta.zebra.core.BarcodeImage
+import eu.gryta.zebra.core.BarcodeResult
+import eu.gryta.zebra.core.BoundingBox
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 

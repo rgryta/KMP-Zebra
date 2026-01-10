@@ -1,4 +1,4 @@
-package eu.gryta.zebra
+package eu.gryta.zebra.core
 
 sealed class BarcodeResult {
     data class Success(
