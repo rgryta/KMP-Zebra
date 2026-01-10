@@ -1,6 +1,6 @@
 rootProject.name = "zebra"
 
-include(":zebra")
+include(":eu-gryta-kmp-zebra")
 include(":sample")
 
 pluginManagement {

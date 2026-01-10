@@ -34,7 +34,7 @@ android {
 
 dependencies {
     // Zebra library
-    implementation(project(":zebra"))
+    implementation(project(":eu-gryta-kmp-zebra"))
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))
