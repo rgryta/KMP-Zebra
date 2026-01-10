@@ -46,7 +46,7 @@ jobs:
           BUMPVERSION_COMMIT: "true"
           BUMPVERSION_TAG: "false"
           BUMPVERSION_PARSE: '(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)'
-          BUMPVERSION_SERIALIZE: '{major}.{minor}.{patch}'
+          BUMPVERSION_SERIALIZE: '["{major}.{minor}.{patch}"]'
           BUMPVERSION_SEARCH: 'version={current_version}'
           BUMPVERSION_REPLACE: 'version={new_version}'
           BUMPVERSION_REGEX: "false"
