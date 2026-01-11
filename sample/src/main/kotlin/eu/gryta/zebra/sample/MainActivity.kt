@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -98,6 +99,12 @@ fun MainScreen() {
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 }
                 )
+                NavigationBarItem(
+                    icon = { Icon(Icons.Default.PhotoCamera, contentDescription = "Camera") },
+                    label = { Text("Camera") },
+                    selected = selectedTab == 2,
+                    onClick = { selectedTab = 2 }
+                )
             }
         }
     ) { paddingValues ->
@@ -105,6 +112,7 @@ fun MainScreen() {
             when (selectedTab) {
                 0 -> GeneratorScreen()
                 1 -> ScannerScreen()
+                2 -> CameraScreen()
             }
         }
     }
