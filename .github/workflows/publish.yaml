@@ -33,4 +33,4 @@ jobs:
         env:
           GPR_USERNAME: ${{ secrets.GPR_USERNAME }}
           GPR_TOKEN: ${{ secrets.GPR_TOKEN }}
-        run: ./gradlew :zebra:publishAllPublicationsToGitHubPackagesRepository --no-daemon --stacktrace --info --scan --no-configuration-cache
+        run: ./gradlew :eu-gryta-kmp-zebra:publishAllPublicationsToGitHubPackagesRepository --no-daemon --stacktrace --info --scan --no-configuration-cache
