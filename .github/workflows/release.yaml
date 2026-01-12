@@ -120,9 +120,6 @@ jobs:
           # -----------------------------
           if [ -n "$PREV_TAG" ]; then
             git diff "$PREV_TAG" HEAD > context/full_diff.patch
-            echo "files=context/$RELEASE_APK context/full_diff.patch" >> "$GITHUB_OUTPUT"
-          else
-            echo "files=context/$RELEASE_APK" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Create GitHub Release
@@ -130,6 +127,8 @@ jobs:
         with:
           token: ${{ secrets.GH_ACTIONS_TOKEN }}
           body_path: context/release_notes.md
-          files: ${{ steps.prepare_assets.outputs.files }}
+          files: |
+            context/*.apk
+            context/*.patch
           draft: false
           prerelease: false
