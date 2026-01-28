@@ -106,13 +106,13 @@ fun CameraScreen() {
             detectedBarcode?.boundingBox?.let { box ->
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     if (imageWidth > 0 && imageHeight > 0) {
-                        val scaleX = size.width / imageWidth
-                        val scaleY = size.height / imageHeight
+                        val scaleX = size.width / imageHeight
+                        val scaleY = size.height / imageWidth
 
-                        val left = box.x * scaleX
-                        val top = box.y * scaleY
-                        val width = box.width * scaleX
-                        val height = box.height * scaleY
+                        val left = box.y * scaleX
+                        val top = box.x * scaleY
+                        val width = box.height * scaleX
+                        val height = box.width * scaleY
 
                         drawRect(
                             color = Color.Green,
