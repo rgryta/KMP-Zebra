@@ -17,4 +17,6 @@ tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
         val isStable = stableKeyword || regex.matches(candidate.version)
         isStable.not()
     }
+    // Workaround for CME with AGP 9: https://github.com/ben-manes/gradle-versions-plugin/issues/930
+    filterConfigurations = Spec { !it.name.contains("test", ignoreCase = true) }
 }
