@@ -27,6 +27,10 @@ version = appVersion
 kotlin {
     jvmToolchain(25)
 
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
     androidLibrary {
         namespace = "$group.$library"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
