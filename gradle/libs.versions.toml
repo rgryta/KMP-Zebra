@@ -9,7 +9,7 @@ mlkit-barcode = "17.3.0"
 vanniktech = "0.36.0"
 compose-bom = "2026.02.00"
 activity-compose = "1.12.4"
-camerax = "1.6.0-rc01"
+camerax = "1.7.0-alpha01"
 coil = "3.4.0"
 versions-plugin = "0.53.0"
 
