@@ -8,6 +8,7 @@ import eu.gryta.zebra.core.BarcodeImage
 import eu.gryta.zebra.core.BarcodeResult
 import eu.gryta.zebra.core.BoundingBox
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.resume
 
 actual class BarcodeScanner {
@@ -24,6 +25,8 @@ actual class BarcodeScanner {
             .build()
 
         val scanner = BarcodeScanning.getClient(options)
+        val closed = AtomicBoolean(false)
+        val closeOnce = { if (closed.compareAndSet(false, true)) scanner.close() }
         val inputImage = InputImage.fromBitmap(image.bitmap, 0)
 
         scanner.process(inputImage)
@@ -43,15 +46,15 @@ actual class BarcodeScanner {
                 } else {
                     BarcodeResult.NotFound
                 }
+                closeOnce()
                 continuation.resume(result)
             }
             .addOnFailureListener { e ->
+                closeOnce()
                 continuation.resume(BarcodeResult.Error(e.message ?: "Scan failed", e))
             }
 
-        continuation.invokeOnCancellation {
-            scanner.close()
-        }
+        continuation.invokeOnCancellation { closeOnce() }
     }
 
     actual suspend fun scanMultiple(
@@ -67,6 +70,8 @@ actual class BarcodeScanner {
             .build()
 
         val scanner = BarcodeScanning.getClient(options)
+        val closed = AtomicBoolean(false)
+        val closeOnce = { if (closed.compareAndSet(false, true)) scanner.close() }
         val inputImage = InputImage.fromBitmap(image.bitmap, 0)
 
         scanner.process(inputImage)
@@ -87,15 +92,15 @@ actual class BarcodeScanner {
                 } else {
                     listOf(BarcodeResult.NotFound)
                 }
+                closeOnce()
                 continuation.resume(results)
             }
             .addOnFailureListener { e ->
+                closeOnce()
                 continuation.resume(listOf(BarcodeResult.Error(e.message ?: "Scan failed", e)))
             }
 
-        continuation.invokeOnCancellation {
-            scanner.close()
-        }
+        continuation.invokeOnCancellation { closeOnce() }
     }
 }
 
