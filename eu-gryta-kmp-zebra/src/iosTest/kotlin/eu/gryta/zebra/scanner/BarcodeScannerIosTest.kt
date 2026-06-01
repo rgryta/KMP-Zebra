@@ -28,6 +28,7 @@ class BarcodeScannerIosTest {
         val image = BarcodeImage.fromByteArray(bytes, width = 0, height = 0, format = ImageFormat.JPEG)
 
         val result = BarcodeScanner().scan(image, BarcodeFormat.all(), ScanConfig.default())
+        println("DIAG scan_decodes_known_qr result = $result")
 
         assertTrue(result is BarcodeResult.Success, "expected Success, got $result")
         assertEquals("WELLMATE-TEST", result.text)

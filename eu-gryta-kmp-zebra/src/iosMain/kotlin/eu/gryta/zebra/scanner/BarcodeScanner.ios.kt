@@ -49,26 +49,6 @@ private fun symbologyToFormat(symbology: String?): BarcodeFormat? = when (symbol
     else -> null
 }
 
-private fun formatsToSymbologies(formats: Set<BarcodeFormat>): List<String> =
-    formats.mapNotNull { fmt ->
-        when (fmt) {
-            BarcodeFormat.EAN_13 -> VNBarcodeSymbologyEAN13
-            BarcodeFormat.EAN_8 -> VNBarcodeSymbologyEAN8
-            BarcodeFormat.UPC_E -> VNBarcodeSymbologyUPCE
-            BarcodeFormat.UPC_A -> VNBarcodeSymbologyEAN13 // Vision reports UPC-A as EAN-13
-            BarcodeFormat.CODE_128 -> VNBarcodeSymbologyCode128
-            BarcodeFormat.CODE_39 -> VNBarcodeSymbologyCode39
-            BarcodeFormat.CODE_93 -> VNBarcodeSymbologyCode93
-            BarcodeFormat.CODABAR -> VNBarcodeSymbologyCodabar
-            BarcodeFormat.ITF -> VNBarcodeSymbologyITF14
-            BarcodeFormat.QR_CODE -> VNBarcodeSymbologyQR
-            BarcodeFormat.DATA_MATRIX -> VNBarcodeSymbologyDataMatrix
-            BarcodeFormat.PDF_417 -> VNBarcodeSymbologyPDF417
-            BarcodeFormat.AZTEC -> VNBarcodeSymbologyAztec
-            else -> null // MAXICODE, RSS_14, RSS_EXPANDED unsupported by Vision
-        }
-    }.filterNotNull().distinct()
-
 private fun observationToResult(obs: VNBarcodeObservation): BarcodeResult {
     val text = obs.payloadStringValue ?: return BarcodeResult.NotFound
     val format = symbologyToFormat(obs.symbology) ?: BarcodeFormat.QR_CODE
@@ -98,11 +78,10 @@ actual class BarcodeScanner {
     private fun detect(image: BarcodeImage, formats: Set<BarcodeFormat>): List<BarcodeResult> {
         val data = image.toByteArray().toNSData()
 
+        // Detect all Vision-supported symbologies; restricting request.symbologies to an
+        // explicit list proved unreliable across Vision revisions (a requested symbology
+        // could be silently excluded). We filter the results by `formats` afterward instead.
         val request = VNDetectBarcodesRequest()
-        val symbologies = formatsToSymbologies(formats)
-        if (symbologies.isNotEmpty()) {
-            request.symbologies = symbologies
-        }
 
         val handler = VNImageRequestHandler(data = data, options = mapOf<Any?, Any?>())
         handler.performRequests(listOf(request), error = null)
@@ -110,6 +89,14 @@ actual class BarcodeScanner {
         @Suppress("UNCHECKED_CAST")
         val observations = (request.results as? List<VNBarcodeObservation>).orEmpty()
         if (observations.isEmpty()) return listOf(BarcodeResult.NotFound)
-        return observations.map { observationToResult(it) }
+
+        val results = observations.map { observationToResult(it) }
+        val matchAll = formats.isEmpty() || formats == BarcodeFormat.all()
+        val filtered = if (matchAll) {
+            results
+        } else {
+            results.filter { it is BarcodeResult.Success && it.format in formats }
+        }
+        return filtered.ifEmpty { listOf(BarcodeResult.NotFound) }
     }
 }
