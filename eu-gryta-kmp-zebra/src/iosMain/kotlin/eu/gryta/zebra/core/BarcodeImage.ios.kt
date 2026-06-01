@@ -1,8 +1,8 @@
 package eu.gryta.zebra.core
 
-// Simplified stub implementation for iOS
-// This compiles without CocoaPods and allows the project to build
-// To enable full functionality, implement using iOS Vision framework (see IOS_ALTERNATIVES.md)
+// iOS BarcodeImage stores the source bytes verbatim. For ImageFormat.JPEG the
+// bytes are an encoded JPEG that BarcodeScanner decodes via UIImage(data:).
+// For raw formats (RGB/RGBA/GRAYSCALE/YUV) the bytes are the raw pixel buffer.
 
 actual class BarcodeImage internal constructor(
     actual val width: Int,

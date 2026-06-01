@@ -68,6 +68,11 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+
+        iosTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.core)
+        }
     }
 }
 
@@ -128,5 +133,19 @@ mavenPublishing {
             connection.set("scm:git:git://github.com/rgryta/KMP-Zebra.git")
             developerConnection.set("scm:git:ssh://git@github.com/rgryta/KMP-Zebra.git")
         }
+    }
+}
+
+// Surface stdout + full assertion messages from native test tasks in CI logs.
+tasks.withType<org.gradle.api.tasks.testing.AbstractTestTask>().configureEach {
+    testLogging {
+        showStandardStreams = true
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        events(
+            org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED,
+            org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED,
+            org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT,
+            org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR,
+        )
     }
 }

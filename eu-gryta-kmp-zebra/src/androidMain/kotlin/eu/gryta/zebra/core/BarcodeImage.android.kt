@@ -85,6 +85,10 @@ actual class BarcodeImage(val bitmap: Bitmap) {
                     }
                     bmp
                 }
+                ImageFormat.JPEG -> {
+                    BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                        ?: throw IllegalArgumentException("Failed to decode JPEG bytes")
+                }
             }
 
             return BarcodeImage(bitmap)

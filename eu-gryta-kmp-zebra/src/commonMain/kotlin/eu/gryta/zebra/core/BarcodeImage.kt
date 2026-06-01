@@ -4,7 +4,8 @@ enum class ImageFormat {
     RGB,
     RGBA,
     GRAYSCALE,
-    YUV
+    YUV,
+    JPEG
 }
 
 expect class BarcodeImage {
