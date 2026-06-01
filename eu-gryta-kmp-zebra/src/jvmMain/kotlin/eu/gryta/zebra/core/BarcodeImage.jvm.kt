@@ -79,6 +79,16 @@ actual class BarcodeImage(val bufferedImage: BufferedImage) {
                         }
                     }
                 }
+                ImageFormat.JPEG -> {
+                    // Decode JPEG bytes
+                    val inputStream = java.io.ByteArrayInputStream(bytes)
+                    val decodedImage = ImageIO.read(inputStream)
+                    if (decodedImage != null) {
+                        val graphics = image.graphics
+                        graphics.drawImage(decodedImage, 0, 0, null)
+                        graphics.dispose()
+                    }
+                }
             }
 
             return BarcodeImage(image)
