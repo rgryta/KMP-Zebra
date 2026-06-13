@@ -10,7 +10,7 @@ vanniktech = "0.36.0"
 compose-bom = "2026.05.01"
 activity-compose = "1.13.0"
 camerax = "1.6.1"  # P25/F8: off the alpha, aligned with App. Used only by the sample app, not the published lib.
-coil = "3.4.0"
+coil = "3.5.0"
 versions-plugin = "0.54.0"
 
 [libraries]
